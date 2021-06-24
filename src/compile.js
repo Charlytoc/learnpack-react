@@ -7,6 +7,8 @@ const run = (compiler) => new Promise((res, rej) => compiler.run((err, stats) =>
   res({ err, stats });
 }));
 
+const clean = (path) => path.indexOf("./") === 0 ? path : "./" + path;
+
 module.exports = {
   validate: () => true,
   run: async function ({ exercise, socket, configuration }) {
@@ -35,15 +37,16 @@ module.exports = {
     //the base directory for the preview, the bundle will be dropped here
     webpackConfig.output.publicPath = configuration.publicPath;
 
-    webpackConfig.entry = entryPath
-    console.log(webpackConfig)
-    // webpackConfig.entry = [
-    //   ...entry,
-    //   `webpack-dev-server/client?http://${config.address}:${config.port}`
-    // ];
+    // webpackConfig.entry = entryPath
+    webpackConfig.entry = [
+      clean(entryPath),
+      // `webpack-dev-server/client?http://${config.address}:${config.port}`
+    ];
 
+    console.log("using webpack...")
     const compiler = webpack(webpackConfig);
     const { err, stats } = await run(compiler);
+    console.log("webpack done...")
 
     if (err) throw CompilationError(err);
 
@@ -52,6 +55,10 @@ module.exports = {
         colors: true    // Shows colors in the console
     });
     if(stats.hasErrors()) throw CompilationError(output);
+
+    //open preview window on the front-end.
+    socket.openPreview()
+
     return Utils.cleanStdout(output);
 
   },

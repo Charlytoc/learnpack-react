@@ -11,6 +11,8 @@ nodeModulesPath = nodeModulesPath.substr(0,nodeModulesPath.indexOf("node_modules
 module.exports =  {
   validate: async function({ exercise, configuration }){
 
+    if (!fs.existsSync(nodeModulesPath+'/prettier')) throw InternalError(`Uknown prettier path`);
+
     if (!shell.which('jest')) {
       const packageName = "jest@24.8.0";
       throw TestingError(`🚫 You need to have ${packageName} installed to run test the exercises, run $ npm i ${packageName} -g`);
@@ -23,10 +25,10 @@ module.exports =  {
     let jestConfig = {
       verbose: true,
       moduleDirectories: [nodeModulesPath],
+      prettierPath: nodeModulesPath+'/prettier',
       transform: {
         "^.+\\.js?$": transformer
       },
-      globalSetup: path.resolve(__dirname, './_prepend.test.js')
     }
 
     const getEntry = () => {
@@ -38,17 +40,12 @@ module.exports =  {
     }
 
     const getCommands = async function(){
+      const reportedPath = path.resolve(__dirname,'./_reporter.js')
+      if (!fs.existsSync(reportedPath))  throw TestingError(`🚫 Custom Jest Reporter not found for at ${reportedPath}`);
 
-      const appPath = exercise.entry || exercise.files.map(f => './'+f.path).find(f => f.indexOf('app.js') > -1);
-      let answers = []
-      if(appPath){
-        const content = fs.readFileSync(appPath, "utf8");
-        const count = Utils.getMatches(/^([^\/])+prompt\((?:["'`]{1}(.*)["'`]{1})?\)/gm, content);
-        answers = (count.length == 0) ? [] : await socket.ask(count);
-      }
-      
-      jestConfig.reporters = [[ __dirname+'/_reporter.js', { reportPath: `${configuration.dirPath}/reports/${exercise.slug}.json` }]];
-      return `jest --config '${JSON.stringify({ ...jestConfig, globals: { __stdin: answers }, testRegex: getEntry() })}' --colors`
+      console.log(`${configuration.dirPath}/reports/${exercise.slug}.json`)
+      jestConfig.reporters = [[ reportedPath, { reportPath: `${configuration.dirPath}/reports/${exercise.slug}.json` }]];
+      return `jest --config '${JSON.stringify({ ...jestConfig, testRegex: getEntry() })}' --colors`
     }
 
     const getStdout = (rawStdout) => {
@@ -64,7 +61,9 @@ module.exports =  {
           _stdout.push(msg);
         }
       }
-      else throw TestingError("Could not find the error report for "+exercise.slug);
+      else{
+        return [rawStdout, "Could not find the error report for "+exercise.slug]
+      } 
       return _stdout
     }
 

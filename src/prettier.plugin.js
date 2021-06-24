@@ -65,12 +65,15 @@ module.exports = class PrettierPlugin {
     compiler.hooks.emit.tapAsync('Prettier', (compilation, callback) => {
       const promises = [];
       compilation.fileDependencies.forEach(filepath => {
-
         let fileExtension = path.extname(filepath);
         if (this.extensions.indexOf(fileExtension) === -1 || this.exclude.find(reg => RegExp(reg).test(filepath))) {
           return;
         }
         fileExtension = fileExtension.substr(1);
+        
+        if (!filepath.includes(process.cwd())) {
+          return;
+        }
 
         if (/node_modules/.exec(filepath)) {
           return;

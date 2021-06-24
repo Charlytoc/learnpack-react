@@ -1,5 +1,6 @@
 const webpack = require('webpack');
 const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 const prettyConfig = require('./prettier.config.js');
 const PrettierPlugin = require("./prettier.plugin.js");
 
@@ -13,7 +14,7 @@ module.exports = (files) => ({
   module: {
     rules: [
         {
-          test: /\.(js)$/,
+          test: /\.(js|jsx)$/,
           exclude: /node_modules/,
           use: [
             {
@@ -67,6 +68,10 @@ module.exports = (files) => ({
   },
   devtool: "source-map",
   plugins: [
+    new HtmlWebpackPlugin({
+        // favicon: '4geeks.ico',
+        template: path.resolve(__dirname, './template.html')
+    }),
     new PrettierPlugin(prettyConfig)
   ]
 });
