@@ -4,6 +4,7 @@ const path = require("path");
 const parsers = {
   js: "babel",
   jsx: "babel",
+  json: "babel",
   css: "css",
   sass: "sass",
   html: "html",

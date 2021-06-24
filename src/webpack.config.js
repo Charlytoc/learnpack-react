@@ -3,7 +3,7 @@ const path = require('path');
 const prettyConfig = require('./prettier.config.js');
 const PrettierPlugin = require("./prettier.plugin.js");
 
-const nodeModulesPath = path.resolve(__dirname, '../../node_modules');
+const nodeModulesPath = path.resolve(__dirname, '../node_modules');
 
 module.exports = (files) => ({
   mode: "development",
@@ -32,9 +32,6 @@ module.exports = (files) => ({
         },
         {
           test: /\.(css|scss)$/, use: [
-          {
-            loader: MiniCssExtractPlugin.loader,
-          },
           {
               loader: "css-loader" // translates CSS into CommonJS
           }, {

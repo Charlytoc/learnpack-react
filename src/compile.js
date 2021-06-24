@@ -1,13 +1,17 @@
 const fs = require('fs');
 const path = require('path');
-const { node } = require('compile-run');
+const webpack = require('webpack');
 const { Utils, CompilationError } = require('./utils/index.js');
+
+const run = (compiler) => new Promise((res, rej) => compiler.run((err, stats) => {
+  res({ err, stats });
+}));
 
 module.exports = {
   validate: () => true,
-  run: async function ({ exercise, socket }) {
+  run: async function ({ exercise, socket, configuration }) {
 
-    let entryPath = exercise.entry || exercise.files.map(f => './'+f.path).find(f => f.indexOf('app.js') > -1);
+    let entryPath = exercise.entry || exercise.files.map(f => './'+f.path).find(f => f.indexOf('app.jsx') > -1);
     if(!entryPath) throw new Error("No entry file, maybe you need to create an app.js file on the exercise folder?");
 
     /**
@@ -27,21 +31,27 @@ module.exports = {
       modules: false
     };
     // the url were webpack will publish the preview
-    webpackConfig.devServer.contentBase = config.configPath.output;
-    webpackConfig.output.path = process.cwd() + '/' + config.configPath.output;
+    webpackConfig.output.path = process.cwd() + '/' + configuration.outputPath;
     //the base directory for the preview, the bundle will be dropped here
-    webpackConfig.output.publicPath = config.publicPath;
+    webpackConfig.output.publicPath = configuration.publicPath;
+
+    webpackConfig.entry = entryPath
+    console.log(webpackConfig)
+    // webpackConfig.entry = [
+    //   ...entry,
+    //   `webpack-dev-server/client?http://${config.address}:${config.port}`
+    // ];
 
     const compiler = webpack(webpackConfig);
     const { err, stats } = await run(compiler);
 
-    if (err) throw CompilerError(err);
+    if (err) throw CompilationError(err);
 
     const output = stats.toString({
         chunks: false,  // Makes the build much quieter
         colors: true    // Shows colors in the console
     });
-    if(stats.hasErrors()) throw CompilerError(output);
+    if(stats.hasErrors()) throw CompilationError(output);
     return Utils.cleanStdout(output);
 
   },
