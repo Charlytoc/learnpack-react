@@ -43,10 +43,8 @@ module.exports = {
       // `webpack-dev-server/client?http://${config.address}:${config.port}`
     ];
 
-    console.log("using webpack...")
     const compiler = webpack(webpackConfig);
     const { err, stats } = await run(compiler);
-    console.log("webpack done...")
 
     if (err) throw CompilationError(err);
 

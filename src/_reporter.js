@@ -1,10 +1,9 @@
 const fs = require('fs')
 const path = require('path')
+const chalk = require("chalk")
 
-console.log("Load json reporter...")
 class JSONReporter {
   constructor(globalConfig, options) {
-    console.log("Innitializing json reporter...")
     this._globalConfig = globalConfig;
     this._options = options;
   }
@@ -20,7 +19,7 @@ class JSONReporter {
       console.log(testResults.map(e => e.failureMessage).join("\n"));
       console.log("");
       failed.forEach(error => {
-        console.log(` ${error.status !== 'failed' ? '✓'.green.bold : 'x'.red.bold} ${error.title.white}`);
+        console.log(` ${error.status !== 'failed' ? chalk.green('✓').bold() : chalk.red('x').bold()} ${chalk.white(error.title)}`);
       });
       console.log('');
       console.error(`Some of your code is not working as expected, read above ↑`);
@@ -46,7 +45,7 @@ class JSONReporter {
       testResults: results.testResults.map(r => ({ message: r.failureMessage, errorType: r.testExecError })),
       failed: [].concat.apply([], errorsGroups),
     }
-    this.print(result);
+    // this.print(result);
     this.save(result);
   }
 }

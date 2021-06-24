@@ -2,6 +2,7 @@ const webpack = require('webpack');
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const prettyConfig = require('./prettier.config.js');
+const ErrorOverlayPlugin = require('error-overlay-webpack-plugin');
 const PrettierPlugin = require("./prettier.plugin.js");
 
 const nodeModulesPath = path.resolve(__dirname, '../node_modules');
@@ -68,6 +69,7 @@ module.exports = (files) => ({
   },
   devtool: "source-map",
   plugins: [
+    new ErrorOverlayPlugin(),
     new HtmlWebpackPlugin({
         // favicon: '4geeks.ico',
         template: path.resolve(__dirname, './template.html')

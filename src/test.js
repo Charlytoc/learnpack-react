@@ -27,7 +27,7 @@ module.exports =  {
       moduleDirectories: [nodeModulesPath],
       prettierPath: nodeModulesPath+'/prettier',
       transform: {
-        "^.+\\.js?$": transformer
+        "^.+\\.[t|j]sx?$": transformer
       },
     }
 
@@ -43,7 +43,6 @@ module.exports =  {
       const reportedPath = path.resolve(__dirname,'./_reporter.js')
       if (!fs.existsSync(reportedPath))  throw TestingError(`🚫 Custom Jest Reporter not found for at ${reportedPath}`);
 
-      console.log(`${configuration.dirPath}/reports/${exercise.slug}.json`)
       jestConfig.reporters = [[ reportedPath, { reportPath: `${configuration.dirPath}/reports/${exercise.slug}.json` }]];
       return `jest --config '${JSON.stringify({ ...jestConfig, testRegex: getEntry() })}' --colors`
     }
