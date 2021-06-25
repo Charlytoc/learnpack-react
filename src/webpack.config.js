@@ -1,11 +1,9 @@
-const webpack = require('webpack');
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const prettyConfig = require('./prettier.config.js');
 const ErrorOverlayPlugin = require('error-overlay-webpack-plugin');
 const PrettierPlugin = require("./prettier.plugin.js");
-
-const nodeModulesPath = path.resolve(__dirname, '../node_modules');
+const { nodeModulesPath } = require("./_config");
 
 module.exports = (files) => ({
   mode: "development",
@@ -33,16 +31,9 @@ module.exports = (files) => ({
           ]
         },
         {
-          test: /\.(css|scss)$/, use: [
+          test: /\.(css)$/, use: [
           {
               loader: "css-loader" // translates CSS into CommonJS
-          }, {
-              loader: "postcss-loader", //for the window error
-              options: {
-                plugins: () => [require(nodeModulesPath+'/autoprefixer')]
-              }
-          }, {
-              loader: "sass-loader" // compiles Sass to CSS
           }]
         }, //css only files
         {

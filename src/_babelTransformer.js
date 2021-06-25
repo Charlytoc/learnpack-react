@@ -2,7 +2,7 @@
 
 const babelJest = require('babel-jest');
 const path = require('path');
-const nodeModulesPath = path.resolve(__dirname, '../node_modules');
+const { nodeModulesPath } = require("./_config");
 const env = nodeModulesPath+'/@babel/preset-env';
 const react = nodeModulesPath+'/@babel/preset-react';
 
