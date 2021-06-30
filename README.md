@@ -19,7 +19,7 @@ $ npm install -g learnpack-react
 $ oclif-example COMMAND
 running command...
 $ oclif-example (-v|--version|version)
-learnpack-react/0.0.12 darwin-x64 node-v14.16.0
+learnpack-react/0.0.13 linux-x64 node-v14.17.0
 $ oclif-example --help [COMMAND]
 USAGE
   $ oclif-example COMMAND
