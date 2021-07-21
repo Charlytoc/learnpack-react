@@ -1,7 +1,7 @@
 {
   "name": "learnpack-react",
   "description": "React compiler for learnpack tutorials",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "author": "Alejandro Sanchez @alesanchezr",
   "bugs": "https://github.com/learnpack/learnpack/issues",
   "dependencies": {

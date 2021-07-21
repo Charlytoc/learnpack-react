@@ -55,7 +55,7 @@ module.exports = {
     if(stats.hasErrors()) throw CompilationError(output);
 
     //open preview window on the front-end.
-    socket.openPreview()
+    socket.openWindow(`http://${config.address}:${config.port}`)
 
     return Utils.cleanStdout(output);
 
