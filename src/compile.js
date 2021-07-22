@@ -40,7 +40,7 @@ module.exports = {
     // webpackConfig.entry = entryPath
     webpackConfig.entry = [
       clean(entryPath),
-      // `webpack-dev-server/client?http://${config.address}:${config.port}`
+      // `webpack-dev-server/client?http://${configuration.address}:${configuration.port}`
     ];
 
     const compiler = webpack(webpackConfig);
@@ -55,7 +55,7 @@ module.exports = {
     if(stats.hasErrors()) throw CompilationError(output);
 
     //open preview window on the front-end.
-    socket.openWindow(`http://${config.address}:${config.port}`)
+    socket.openWindow(`${configuration.publicUrl}/preview`)
 
     return Utils.cleanStdout(output);
 
