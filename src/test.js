@@ -2,8 +2,8 @@ const fs = require('fs')
 const path = require('path')
 const chalk = require("chalk")
 const shell = require('shelljs')
-const transformer = require.resolve('./_babelTransformer')
-const { Utils, TestingError } = require('./utils/index.js')
+const transformer = require.resolve('./utils/babelTransformer')
+const { Utils, TestingError } = require('learnpack/plugin')
 
 let nodeModulesPath = path.dirname(require.resolve('jest'))
 nodeModulesPath = nodeModulesPath.substr(0,nodeModulesPath.indexOf("node_modules")) + "node_modules/"
@@ -33,14 +33,14 @@ module.exports =  {
 
     const getEntry = () => {
       
-      let testsPath = exercise.files.map(f => f.path).find(f => f.indexOf('test.js') > -1 || f.indexOf('tests.js') > -1);
+      let testsPath = exercise.files.map(f => f.path).find(f => f.includes('test.js') || f.includes('tests.js'));
       if (!fs.existsSync(testsPath))  throw TestingError(`🚫 No test script found on the exercise files`);
   
       return testsPath;
     }
 
     const getCommands = async function(){
-      const reportedPath = path.resolve(__dirname,'./_reporter.js')
+      const reportedPath = path.resolve(__dirname,'./utils/reporter.js')
       if (!fs.existsSync(reportedPath))  throw TestingError(`🚫 Custom Jest Reporter not found for at ${reportedPath}`);
 
       jestConfig.reporters = [[ reportedPath, { reportPath: `${configuration.dirPath}/reports/${exercise.slug}.json` }]];

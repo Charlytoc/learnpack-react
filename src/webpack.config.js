@@ -3,7 +3,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const prettyConfig = require('./prettier.config.js');
 const ErrorOverlayPlugin = require('error-overlay-webpack-plugin');
 const PrettierPlugin = require("./prettier.plugin.js");
-const { nodeModulesPath } = require("./_config");
+const { nodeModulesPath } = require("./utils/config");
 
 module.exports = (files) => ({
   mode: "development",

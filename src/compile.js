@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const webpack = require('webpack');
-const { Utils, CompilationError } = require('./utils/index.js');
+const { Utils, CompilationError } = require('learnpack/plugin');
 
 const run = (compiler) => new Promise((res, rej) => compiler.run((err, stats) => {
   res({ err, stats });
@@ -13,7 +13,7 @@ module.exports = {
   validate: () => true,
   run: async function ({ exercise, socket, configuration }) {
 
-    let entryPath = exercise.entry || exercise.files.map(f => './'+f.path).find(f => f.indexOf('app.jsx') > -1);
+    let entryPath = exercise.files.map(f => './'+f.path).find(f => f.includes(exercise.entry || 'app.jsx'));
     if(!entryPath) throw new Error("No entry file, maybe you need to create an app.js file on the exercise folder?");
 
     /**
