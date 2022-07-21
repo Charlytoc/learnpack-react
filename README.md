@@ -25,7 +25,7 @@ $ npm install -g @learnpack/react
 $ oclif-example COMMAND
 running command...
 $ oclif-example (-v|--version|version)
-@learnpack/react/1.0.10 win32-x64 node-v16.14.0
+@learnpack/react/1.0.11 win32-x64 node-v16.14.0
 $ oclif-example --help [COMMAND]
 USAGE
   $ oclif-example COMMAND
