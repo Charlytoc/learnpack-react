@@ -26,7 +26,6 @@ module.exports =  {
       verbose: true,
       moduleDirectories: [nodeModulesPath],
       prettierPath: nodeModulesPath+'/prettier',
-      testRunner: "jest-circus",
       transform: {
         "^.+\\.[t|j]sx?$": transformer
       },

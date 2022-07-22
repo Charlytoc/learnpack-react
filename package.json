@@ -82,5 +82,9 @@
   "main": "index.js",
   "directories": {
     "test": "test"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "testRunner": "jest-circus/runner"
   }
 }
