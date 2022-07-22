@@ -26,6 +26,7 @@ module.exports =  {
       verbose: true,
       moduleDirectories: [nodeModulesPath],
       prettierPath: nodeModulesPath+'/prettier',
+      testEnvironment: "jsdom",
       transform: {
         "^.+\\.[t|j]sx?$": transformer
       },
