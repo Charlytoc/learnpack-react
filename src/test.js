@@ -46,7 +46,7 @@ module.exports =  {
       if (!fs.existsSync(reportedPath))  throw TestingError(`🚫 Custom Jest Reporter not found for at ${reportedPath}`);
 
       jestConfig.reporters = [[ reportedPath, { reportPath: `${configuration.dirPath}/reports/${exercise.slug}.json` }]];
-      
+
       if(os.type() == 'Windows_NT'){
         return `jest --config='${JSON.stringify({ ...jestConfig, testRegex: getEntry() }).replace('"', '\\"')}' --colors`
       }else {
