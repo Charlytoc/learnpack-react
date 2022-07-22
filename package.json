@@ -38,7 +38,6 @@
     "@oclif/dev-cli": "^1.26.10",
     "@oclif/plugin-help": "^5.1.12",
     "@oclif/test": "^2.1.0",
-    "acorn-jsx": "^5.3.2",
     "chai": "^4.3.6",
     "eslint": "^5.16.0",
     "eslint-config-oclif": "^4.0.0",
