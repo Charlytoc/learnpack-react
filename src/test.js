@@ -14,7 +14,7 @@ module.exports =  {
     if (!fs.existsSync(nodeModulesPath+'/prettier')) throw InternalError(`Uknown prettier path`);
 
     if (!shell.which('jest')) {
-      const packageName = "jest@24.8.0";
+      const packageName = "jest@28.1.3";
       throw TestingError(`🚫 You need to have ${packageName} installed to run test the exercises, run $ npm i ${packageName} -g`);
     }
 
