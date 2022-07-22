@@ -1,7 +1,7 @@
 {
   "name": "@learnpack/react",
   "description": "React compiler for learnpack tutorials",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "author": "Alejandro Sanchez @alesanchezr",
   "bugs": {
     "url": "https://github.com/learnpack/learnpack/issues"
