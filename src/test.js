@@ -1,4 +1,5 @@
 const fs = require('fs')
+const os = require('os')
 const path = require('path')
 const chalk = require("chalk")
 const shell = require('shelljs')
@@ -26,6 +27,7 @@ module.exports =  {
       verbose: true,
       moduleDirectories: [nodeModulesPath],
       prettierPath: nodeModulesPath+'/prettier',
+      testEnvironment: "jsdom",
       transform: {
         "^.+\\.[t|j]sx?$": transformer
       },
@@ -44,7 +46,12 @@ module.exports =  {
       if (!fs.existsSync(reportedPath))  throw TestingError(`🚫 Custom Jest Reporter not found for at ${reportedPath}`);
 
       jestConfig.reporters = [[ reportedPath, { reportPath: `${configuration.dirPath}/reports/${exercise.slug}.json` }]];
-      return `jest --config '${JSON.stringify({ ...jestConfig, testRegex: getEntry() })}' --colors`
+      
+      if(os.type() == 'Windows_NT'){
+        return `jest --config='${JSON.stringify({ ...jestConfig, testRegex: getEntry() }).replace('"', '\\"')}' --colors`
+      }else {
+        return `jest --config='${JSON.stringify({ ...jestConfig, testRegex: getEntry() })}' --colors`
+      }
     }
 
     const getStdout = (rawStdout) => {

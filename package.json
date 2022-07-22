@@ -83,8 +83,5 @@
   "main": "index.js",
   "directories": {
     "test": "test"
-  },
-  "jest": {
-    "testEnvironment": "jsdom"
   }
 }
