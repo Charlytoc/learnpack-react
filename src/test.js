@@ -15,7 +15,7 @@ module.exports =  {
     if (!fs.existsSync(nodeModulesPath+'/prettier')) throw InternalError(`Uknown prettier path`);
 
     if (!shell.which('jest')) {
-      const packageName = "jest@25.5.4";
+      const packageName = "jest@24.8.0";
       throw TestingError(`🚫 You need to have ${packageName} installed to run test the exercises, run $ npm i ${packageName} -g`);
     }
 
@@ -27,7 +27,6 @@ module.exports =  {
       verbose: true,
       moduleDirectories: [nodeModulesPath],
       prettierPath: nodeModulesPath+'/prettier',
-      testEnvironment: "jsdom",
       transform: {
         "^.+\\.[t|j]sx?$": transformer
       },
@@ -46,12 +45,9 @@ module.exports =  {
       if (!fs.existsSync(reportedPath))  throw TestingError(`🚫 Custom Jest Reporter not found for at ${reportedPath}`);
 
       jestConfig.reporters = [[ reportedPath, { reportPath: `${configuration.dirPath}/reports/${exercise.slug}.json` }]];
-
-      if(os.type() == 'Windows_NT'){
-        return `jest --config='${JSON.stringify({ ...jestConfig, testRegex: getEntry() }).replace('"', '\\"')}' --colors`
-      }else {
-        return `jest --config='${JSON.stringify({ ...jestConfig, testRegex: getEntry() })}' --colors`
-      }
+      
+      return `jest --config='${JSON.stringify({ ...jestConfig, testRegex: getEntry() }).replace(/"/g, '\\"')}' --colors`
+      
     }
 
     const getStdout = (rawStdout) => {
