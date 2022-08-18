@@ -46,8 +46,11 @@ module.exports =  {
 
       jestConfig.reporters = [[ reportedPath, { reportPath: `${configuration.dirPath}/reports/${exercise.slug}.json` }]];
       
-      return `jest --config='${JSON.stringify({ ...jestConfig, testRegex: getEntry() }).replace(/"/g, '\\"')}' --colors`
+      if(os.type() == 'Windows_NT'){
+        return `jest --config='${JSON.stringify({ ...jestConfig, testRegex: getEntry() }).replace('"', '\\"')}' --colors`
+      }
       
+      return `jest --config='${JSON.stringify({ ...jestConfig, testRegex: getEntry() })}' --colors`
     }
 
     const getStdout = (rawStdout) => {
