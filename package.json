@@ -28,7 +28,6 @@
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-test-renderer": "^17.0.2",
-    "rewire": "^6.0.0",
     "shelljs": "^0.8.4",
     "source-map-support": "^0.5.19",
     "webpack": "^5.71.0"
@@ -42,7 +41,8 @@
     "eslint-config-oclif": "^3.1.0",
     "globby": "^10.0.2",
     "mocha": "^5.2.0",
-    "nyc": "^14.1.1"
+    "nyc": "^14.1.1",
+    "rewire": "^6.0.0"
   },
   "engines": {
     "node": ">=12.0.0"
