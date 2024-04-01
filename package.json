@@ -1,7 +1,7 @@
 {
   "name": "@learnpack/react",
   "description": "React compiler for learnpack tutorials",
-  "version": "1.1.6",
+  "version": "1.1.7",
   "author": "Alejandro Sanchez @alesanchezr",
   "bugs": {
     "url": "https://github.com/learnpack/learnpack/issues"
@@ -22,7 +22,7 @@
     "jest": "^25.5.4",
     "jest-util": "^25.5.0",
     "jsx-to-string": "^1.4.0",
-    "learnpack": "^0.1.14",
+    "learnpack": "^0.1.27",
     "prettier": "^2.7.1",
     "prop-types": "^15.7.2",
     "react": "^17.0.2",

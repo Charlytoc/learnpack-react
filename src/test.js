@@ -7,12 +7,12 @@ const transformer = require.resolve('./utils/babelTransformer')
 const { Utils, TestingError } = require('learnpack/plugin')
 
 let nodeModulesPath = path.dirname(require.resolve('jest'))
-nodeModulesPath = nodeModulesPath.substr(0,nodeModulesPath.indexOf("node_modules")) + "node_modules/"
+nodeModulesPath = nodeModulesPath.substr(0, nodeModulesPath.indexOf("node_modules")) + "node_modules/"
 
-module.exports =  {
-  validate: async function({ exercise, configuration }){
+module.exports = {
+  validate: async function ({ exercise, configuration }) {
 
-    if (!fs.existsSync(nodeModulesPath+'/prettier')) throw InternalError(`Uknown prettier path`);
+    if (!fs.existsSync(nodeModulesPath + '/prettier')) throw InternalError(`Uknown prettier path`);
 
     if (!shell.which('jest')) {
       const packageName = "jest@25.4.0";
@@ -22,69 +22,81 @@ module.exports =  {
     return true
   },
   run: async ({ exercise, socket, configuration }) => {
-    
+
     let jestConfig = {
       verbose: true,
       moduleDirectories: [nodeModulesPath],
-      prettierPath: nodeModulesPath+'/prettier',
+      prettierPath: nodeModulesPath + '/prettier',
       transform: {
         "^.+\\.[t|j]sx?$": transformer
       },
     }
 
     const getEntry = () => {
-      
+
       let testsPath = exercise.files.map(f => f.path).find(f => f.includes('test.js') || f.includes('tests.js'));
-      if (!fs.existsSync(testsPath))  throw TestingError(`🚫 No test script found on the exercise files`);
-  
+      if (!fs.existsSync(testsPath)) throw TestingError(`🚫 No test script found on the exercise files`);
+
       return testsPath;
     }
 
-    const getCommands = async function(){
-      const reportedPath = path.resolve(__dirname,'./utils/reporter.js')
-      if (!fs.existsSync(reportedPath))  throw TestingError(`🚫 Custom Jest Reporter not found for at ${reportedPath}`);
+    const getCommands = async function () {
+      const reportedPath = path.resolve(__dirname, './utils/reporter.js')
+      if (!fs.existsSync(reportedPath)) throw TestingError(`🚫 Custom Jest Reporter not found for at ${reportedPath}`);
 
-      jestConfig.reporters = [[ reportedPath, { reportPath: `${configuration.dirPath}/reports/${exercise.slug}.json` }]];
-      
-      if(os.type() == 'Windows_NT'){
+      jestConfig.reporters = [[reportedPath, { reportPath: `${configuration.dirPath}/reports/${exercise.slug}.json` }]];
+
+      if (os.type() == 'Windows_NT') {
         return `jest --config='${JSON.stringify({ ...jestConfig, testRegex: getEntry() }).replace('"', '\\"')}' --colors`
       }
-      
+
       return `jest --config='${JSON.stringify({ ...jestConfig, testRegex: getEntry() })}' --colors`
     }
 
     const getStdout = (rawStdout) => {
       let _stdout = [];
-      if (fs.existsSync(`${configuration.dirPath}/reports/${exercise.slug}.json`)){
+      if (fs.existsSync(`${configuration.dirPath}/reports/${exercise.slug}.json`)) {
         const _text = fs.readFileSync(`${configuration.dirPath}/reports/${exercise.slug}.json`);
         const errors = JSON.parse(_text);
-  
+
         _stdout = errors.testResults.map(r => r.message);
-  
-        if(errors.failed.length > 0){
-          msg = `\n\n   ${'Your code must to comply with the following tests:'.red} \n\n${[...new Set(errors.failed)].map((e,i) => `     ${e.status !== 'failed' ? chalk.green.bold('✓ (done)') : chalk.red.bold('x (fail)')} ${i}. ${chalk.white(e.title)}`).join('\n')} \n\n`;
+
+        if (errors.failed.length > 0) {
+          msg = `\n\n   ${'Your code must to comply with the following tests:'.red} \n\n${[...new Set(errors.failed)].map((e, i) => `     ${e.status !== 'failed' ? chalk.green.bold('✓ (done)') : chalk.red.bold('x (fail)')} ${i}. ${chalk.white(e.title)}`).join('\n')} \n\n`;
           _stdout.push(msg);
         }
       }
-      else{
-        return [rawStdout, "Could not find the error report for "+exercise.slug]
-      } 
+      else {
+        return [rawStdout, "Could not find the error report for " + exercise.slug]
+      }
       return _stdout
     }
 
     let commands = await getCommands()
 
-    if(!Array.isArray(commands)) commands = [commands]
+    const result = {
+      starting_at: Date.now(),
+      source_code: "",
+    }
+
+    if (!Array.isArray(commands)) commands = [commands]
     let stdout, stderr, code = [null, null, null]
-    for(let cycle = 0; cycle < commands.length; cycle++){
+    for (let cycle = 0; cycle < commands.length; cycle++) {
       let resp = shell.exec(commands[cycle], { silent: true })
       stdout = resp.stdout
       code = resp.code
       stderr = resp.stderr
-      if(code != 0) break
+      if (code != 0) break
     }
 
-    if(code != 0) throw TestingError(getStdout(stdout || stderr).join())
-    else return stdout && stdout.length > 0 ? stdout : chalk.green("✔ All tests have passed")
+    result.ended_at = Date.now();
+    result.exitCode = code
+    result.stdout = stdout
+    result.stderr = stderr
+
+    if (code != 0) {
+      result.stderr = getStdout(stdout || stderr).join()
+    }
+    return result
   }
 }
