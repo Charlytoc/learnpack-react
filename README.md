@@ -12,12 +12,6 @@ Node Compiler for learnpack tutorials
 * [Usage](#usage)
 * [Commands](#commands)
 <!-- tocstop -->
-* [Usage](#usage)
-* [Commands](#commands)
-<!-- tocstop -->
-* [Usage](#usage)
-* [Commands](#commands)
-<!-- tocstop -->
 # Usage
 <!-- usage -->
 ```sh-session
@@ -25,31 +19,7 @@ $ npm install -g @learnpack/react
 $ oclif-example COMMAND
 running command...
 $ oclif-example (-v|--version|version)
-@learnpack/react/1.1.6 win32-x64 node-v16.14.0
-$ oclif-example --help [COMMAND]
-USAGE
-  $ oclif-example COMMAND
-...
-```
-<!-- usagestop -->
-```sh-session
-$ npm install -g @learnpack/learnpack-react
-$ oclif-example COMMAND
-running command...
-$ oclif-example (-v|--version|version)
-@learnpack/learnpack-react/1.0.0 win32-x64 node-v16.14.0
-$ oclif-example --help [COMMAND]
-USAGE
-  $ oclif-example COMMAND
-...
-```
-<!-- usagestop -->
-```sh-session
-$ npm install -g learnpack-react
-$ oclif-example COMMAND
-running command...
-$ oclif-example (-v|--version|version)
-learnpack-react/0.0.18 darwin-x64 node-v14.16.0
+@learnpack/react/1.1.8 linux-x64 node-v20.11.1
 $ oclif-example --help [COMMAND]
 USAGE
   $ oclif-example COMMAND
@@ -58,9 +28,5 @@ USAGE
 <!-- usagestop -->
 # Commands
 <!-- commands -->
-
-<!-- commandsstop -->
-
-<!-- commandsstop -->
 
 <!-- commandsstop -->
