@@ -1,21 +1,46 @@
 const fs = require('fs')
 const os = require('os')
+const util = require('util')
 const path = require('path')
 const chalk = require("chalk")
 const shell = require('shelljs')
+const {execSync} = require('child_process')
 const transformer = require.resolve('./utils/babelTransformer')
 const { Utils, TestingError } = require('learnpack/plugin')
 
 let nodeModulesPath = path.dirname(require.resolve('jest'))
 nodeModulesPath = nodeModulesPath.substr(0, nodeModulesPath.indexOf("node_modules")) + "node_modules/"
 
+const resultBuilder = {
+  init: (sourceCode) => {
+    this.starting_at = Date.now()
+    this.source_code = sourceCode
+  },
+  finish: (code, stdout, stderr) => {
+    this.ended_at = Date.now();
+    this.exitCode = code
+    this.stdout = stdout
+    this.stderr = stderr
+
+    return {
+      starting_at: this.starting_at,
+      ended_at: this.ended_at,
+      source_code: this.source_code,
+      exitCode: this.exitCode,
+      stdout: this.stdout,
+      stderr: this.stderr
+    }
+  }
+}
+
+
 module.exports = {
   validate: async function ({ exercise, configuration }) {
-
+    
     if (!fs.existsSync(nodeModulesPath + '/prettier')) throw InternalError(`Uknown prettier path`);
 
     if (!shell.which('jest')) {
-      const packageName = "jest@25.4.0";
+      const packageName = "jest@29.7.0";
       throw TestingError(`🚫 You need to have ${packageName} installed to run test the exercises, run $ npm i ${packageName} -g`);
     }
 
@@ -28,8 +53,9 @@ module.exports = {
       moduleDirectories: [nodeModulesPath],
       prettierPath: nodeModulesPath + '/prettier',
       transform: {
-        "^.+\\.[t|j]sx?$": transformer
+        "^.+.jsx?$": transformer,
       },
+      testEnvironment: 'jsdom',
     }
 
     const getEntry = () => {
@@ -44,13 +70,17 @@ module.exports = {
       const reportedPath = path.resolve(__dirname, './utils/reporter.js')
       if (!fs.existsSync(reportedPath)) throw TestingError(`🚫 Custom Jest Reporter not found for at ${reportedPath}`);
 
-      jestConfig.reporters = [[reportedPath, { reportPath: `${configuration.dirPath}/reports/${exercise.slug}.json` }]];
+      jestConfig.reporters = [[reportedPath, { reportPath: path.resolve(`${configuration.dirPath}/reports/${exercise.slug}.json`)}]];
+      jestConfig.testRegex = getEntry()
+      let jestCommand = `jest --config='${JSON.stringify(jestConfig)}' --colors`
+      const isWindows = process.platform === 'win32'
 
-      if (os.type() == 'Windows_NT') {
-        return `jest --config='${JSON.stringify({ ...jestConfig, testRegex: getEntry() }).replace('"', '\\"')}' --colors`
+      if (isWindows) {
+        jestConfig.testRegex = getEntry().replace('/', '\\')
+        jestCommand = `jest --config="${JSON.stringify(jestConfig).replace(/\\\\/g, '\\\\\\\\').replace(/"/g, '\\"')}" --colors`;
       }
 
-      return `jest --config='${JSON.stringify({ ...jestConfig, testRegex: getEntry() })}' --colors`
+      return jestCommand
     }
 
     const getStdout = (rawStdout) => {
@@ -74,10 +104,7 @@ module.exports = {
 
     let commands = await getCommands()
 
-    const result = {
-      starting_at: Date.now(),
-      source_code: "",
-    }
+    resultBuilder.init("")
 
     if (!Array.isArray(commands)) commands = [commands]
     let stdout, stderr, code = [null, null, null]
@@ -89,13 +116,13 @@ module.exports = {
       if (code != 0) break
     }
 
-    result.ended_at = Date.now();
-    result.exitCode = code
-    result.stdout = stdout
-    result.stderr = stderr
+    let result = resultBuilder.finish(code, stdout, stderr)
 
     if (code != 0) {
       result.stderr = getStdout(stdout || stderr).join()
+    }
+    else {
+      result.stdout = chalk.green("✅ All tests passed!")
     }
     return result
   }
